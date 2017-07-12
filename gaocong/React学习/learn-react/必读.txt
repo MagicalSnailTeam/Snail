@@ -1,0 +1,20 @@
+﻿# ES2015转码规则
+$ npm install --save-dev babel-preset-es2015
+
+# react转码规则
+$ npm install --save-dev babel-preset-react
+
+
+然后，将这些规则加入.babelrc。
+
+  {
+    "presets": [
+      "es2015",
+      "react"
+    
+    ],
+    "plugins": []
+  }
+
+#安装webpack在项目中
+cnpm install webpack --save-dev
