@@ -1,11 +1,11 @@
-
+import AddForm from "./Add.js"
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import $, { jQuery } from "jquery";
 import "bootstrap/dist/css/bootstrap.css"
-window.jQuery = jQuery;
 
 
+{/*TR组件*/ }
 class UserItem extends React.Component {
     constructor(props) {
         super(props);
@@ -23,6 +23,7 @@ class UserItem extends React.Component {
         );
     }
 }
+{/*tbody组件*/ }
 class UserList extends React.Component {
     constructor(props) {
         super(props);
@@ -43,6 +44,7 @@ class UserList extends React.Component {
         );
     }
 }
+{/*列表组件*/ }
 class App extends React.Component {
     constructor(props) {
         super(props);
@@ -60,16 +62,12 @@ class App extends React.Component {
             ]
         }
         // This binding is necessary to make `this` work in the callback
-        this.handleClick = this.handleClick.bind(this);
+        this.handleAdd = this.handleAdd.bind(this);
     }
-    handleClick() {
+    handleAdd(addItem) {
         this.setState(function (prevState, props) {
             var currDate = prevState.data;
-            currDate.push({
-                num: "2017077",
-                name: "高聪",
-                age: 23
-            });
+            currDate.push(addItem);
             return {
                 data: currDate
             };
@@ -102,33 +100,15 @@ class App extends React.Component {
                 <div className="row">
                     <div className="col-md-2"></div>
                     <div className="col-md-8">
-                        <form role="form">
-                            <div className="form-group">
-                                <label htmlFor="name">编号</label>
-                                <input type="text" className="form-control" id="name" placeholder="请输入编号" />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="name">姓名</label>
-                                <input type="text" className="form-control" id="name" placeholder="请输入姓名" />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="name">年龄</label>
-                                <input type="text" className="form-control" id="name" placeholder="请输入年龄" />
-                            </div>
-                        </form>
+                        {/*添加表单*/}
+                        <AddForm onAdd={this.handleAdd} />
                     </div>
                     <div className="col-md-2"></div>
-                </div>
-                <div className="row">
-                    <div className="col-md-2"></div>
-                    <div className="col-md-8">
-                        <button className="pull-right" onClick={this.handleClick}>添加</button>
-                    </div>
-                    <div className="col-md-2"> </div>
                 </div>
             </div>
         );
     }
 }
+
 ReactDOM.render(
     <App />, document.getElementById('root'));
