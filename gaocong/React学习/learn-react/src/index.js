@@ -4,11 +4,14 @@ import ReactDOM from "react-dom";
 import $, { jQuery } from "jquery";
 import "bootstrap/dist/css/bootstrap.css"
 
-
 {/*TR组件*/ }
 class UserItem extends React.Component {
     constructor(props) {
         super(props);
+        this.handleDel = this.handleDel.bind(this, this.props.index);
+    }
+    handleDel(index, event) {
+        this.props.onDel(index, event);
     }
     render() {
         var index = this.props.index;
@@ -19,6 +22,7 @@ class UserItem extends React.Component {
                 <td>{user.num}</td>
                 <td>{user.name}</td>
                 <td>{user.age}</td>
+                <td><button onClick={this.handleDel} className="btn btn-default">删除</button></td>
             </tr>
         );
     }
@@ -29,6 +33,7 @@ class UserList extends React.Component {
         super(props);
     }
     render() {
+        var onDel = this.props.onDel;
         return (
             <tbody>
                 {
@@ -36,7 +41,7 @@ class UserList extends React.Component {
                         .props
                         .data
                         .map(function (user, index) {
-                            return <UserItem data={user} key={index} index={index} />
+                            return <UserItem onDel={onDel} data={user} key={index} index={index} />
                         })
 
                 }
@@ -63,6 +68,7 @@ class App extends React.Component {
         }
         // This binding is necessary to make `this` work in the callback
         this.handleAdd = this.handleAdd.bind(this);
+        this.handleDel = this.handleDel.bind(this);
     }
     handleAdd(addItem) {
         this.setState(function (prevState, props) {
@@ -71,6 +77,16 @@ class App extends React.Component {
             return {
                 data: currDate
             };
+        });
+    }
+    handleDel(index, event) {
+        this.setState(function (prevState) {
+            var currDate = prevState.data;
+            return {
+                data: currDate.filter((element, indexFlag) => indexFlag !== index)
+            };
+
+
         });
     }
     render() {
@@ -90,9 +106,10 @@ class App extends React.Component {
                                     <th>编号</th>
                                     <th>姓名</th>
                                     <th>年龄</th>
+                                    <th>操作</th>
                                 </tr>
                             </thead>
-                            <UserList data={this.state.data} />
+                            <UserList onDel={this.handleDel} data={this.state.data} />
                         </table>
                     </div>
                     <div className="col-md-2"></div>
