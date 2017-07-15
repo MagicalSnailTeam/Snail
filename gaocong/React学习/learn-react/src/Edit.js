@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-export default class AddForm extends React.Component {
+export default class EditForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -7,17 +7,20 @@ export default class AddForm extends React.Component {
             name: "",
             age: ""
         };
-
-        this.handleSubmit = this.handleSubmit.bind(this);
+      
         this.handleChange = this.handleChange.bind(this);
+        this.setValueFormState = this.setValueFormState.bind(this);
     }
-    handleSubmit(event) {
-        this.props.onAdd({
-            num: this.state.num,
-            name: this.state.name,
-            age: this.state.age
+    setValueFormState(data) {
+        this.setState({
+            num: data.num,
+            name: data.name,
+            age: data.age,
+            index: data.index
         });
-        event.preventDefault();
+    }
+    getFormState() {
+        return this.state;
     }
     handleChange(event) {
         var target = event.target
@@ -26,6 +29,9 @@ export default class AddForm extends React.Component {
         this.setState({
             [name]: value
         });
+    }
+    componentWillReceiveProps(props) {
+        this.setValueFormState(props.data);
     }
     render() {
         return (
@@ -42,7 +48,6 @@ export default class AddForm extends React.Component {
                     <label htmlFor="name">年龄</label>
                     <input type="text" name="age" value={this.state.age} className="form-control" placeholder="请输入年龄" onChange={this.handleChange} />
                 </div>
-                <button className="pull-right" type="submit">添加</button>
             </form>
         );
     }

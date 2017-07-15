@@ -1,56 +1,13 @@
 import AddForm from "./Add.js"
+import Modal from "./Modal.js"
+import UserList from "./Tbody.js"
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
-import $, { jQuery } from "jquery";
-import "bootstrap/dist/css/bootstrap.css"
+import "bootstrap/dist/css/bootstrap.min.css"
+import "bootstrap/dist/js/bootstrap.min.js"
 
-{/*TR组件*/ }
-class UserItem extends React.Component {
-    constructor(props) {
-        super(props);
-        this.handleDel = this.handleDel.bind(this, this.props.index);
-    }
-    handleDel(index, event) {
-        this.props.onDel(index, event);
-    }
-    render() {
-        var index = this.props.index;
-        var user = this.props.data;
-        return (
-            <tr>
-                <td>{index + 1}</td>
-                <td>{user.num}</td>
-                <td>{user.name}</td>
-                <td>{user.age}</td>
-                <td><button onClick={this.handleDel} className="btn btn-default">删除</button></td>
-            </tr>
-        );
-    }
-}
-{/*tbody组件*/ }
-class UserList extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-    render() {
-        var onDel = this.props.onDel;
-        return (
-            <tbody>
-                {
-                    this
-                        .props
-                        .data
-                        .map(function (user, index) {
-                            return <UserItem onDel={onDel} data={user} key={index} index={index} />
-                        })
-
-                }
-            </tbody>
-        );
-    }
-}
 {/*列表组件*/ }
-class App extends React.Component {
+class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -58,36 +15,70 @@ class App extends React.Component {
                 {
                     num: '2015011',
                     name: 'Jacky',
-                    age: 21
+                    age: 21,
+                    index: 0
                 }, {
                     num: '2015012',
                     name: 'Mary',
-                    age: 20
+                    age: 20,
+                    index: 1
                 }
             ]
         }
+        this.state.EditData = {
+            num: '',
+            name: '',
+            age: "",
+            index: ""
+        };
         // This binding is necessary to make `this` work in the callback
         this.handleAdd = this.handleAdd.bind(this);
         this.handleDel = this.handleDel.bind(this);
+        this.handleEdit = this.handleEdit.bind(this);
+        this.handleSave = this.handleSave.bind(this);
+
     }
     handleAdd(addItem) {
         this.setState(function (prevState, props) {
-            var currDate = prevState.data;
-            currDate.push(addItem);
+            var currData = prevState.data;
+            addItem.index = currData[currData.length - 1].index + 1;
+            currData.push(addItem);
             return {
-                data: currDate
+                data: currData
             };
         });
     }
     handleDel(index, event) {
         this.setState(function (prevState) {
-            var currDate = prevState.data;
+            var currData = prevState.data;
             return {
-                data: currDate.filter((element, indexFlag) => indexFlag !== index)
+                data: currData.filter((element, indexFlag) => indexFlag !== index)
             };
 
 
         });
+    }
+    handleEdit(user, event) {
+        this.setState({
+            EditData: user
+        });
+    }
+    handleSave(data) {
+        this.setState(function (prevState) {
+            $(prevState.data).each(function () {
+                if (this.index == data.index) {
+                    this.num = data.num;
+                    this.name = data.name;
+                    this.age = data.age;
+                    return;
+                }
+            });
+            return {
+                data: prevState.data
+            };
+        });
+        //关闭弹框
+        $('#myModal').modal("hide");
     }
     render() {
         return (
@@ -109,7 +100,7 @@ class App extends React.Component {
                                     <th>操作</th>
                                 </tr>
                             </thead>
-                            <UserList onDel={this.handleDel} data={this.state.data} />
+                            <UserList onEdit={this.handleEdit} onDel={this.handleDel} data={this.state.data} />
                         </table>
                     </div>
                     <div className="col-md-2"></div>
@@ -122,6 +113,7 @@ class App extends React.Component {
                     </div>
                     <div className="col-md-2"></div>
                 </div>
+                <Modal data={this.state.EditData} onSave={this.handleSave} />
             </div>
         );
     }
